@@ -61,6 +61,7 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );
+
   static const TextStyle bodyXSmallRegular = TextStyle(
     fontFamily: 'Poppins',
     fontSize: 11,

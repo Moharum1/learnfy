@@ -17,6 +17,7 @@ class AppTheme {
         ),
       ),
     ),
+
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.black5,
