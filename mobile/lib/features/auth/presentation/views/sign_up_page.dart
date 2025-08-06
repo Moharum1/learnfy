@@ -7,7 +7,6 @@ import 'package:learnfy/features/auth/presentation/widgets/auth_text_form_field.
 import 'package:learnfy/features/auth/presentation/widgets/custom_check_box.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/assets.dart';
-import '../../../../core/helper_functions/build_app_bar.dart';
 import '../widgets/dont_have_account_widget.dart';
 import '../widgets/terms_and_conditions_widget.dart';
 
@@ -44,7 +43,7 @@ class _SignUpPageState extends State<SignUpPage> {
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     return Scaffold(
-      appBar: buildAppBar(title: 'New Account'),
+      // appBar: buildAppBar(title: 'New Account'),
       body: BlocProvider(
         create: (context) => SignUpCubit(),
         child: Padding(
