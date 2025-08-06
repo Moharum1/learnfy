@@ -8,6 +8,11 @@ class AppTextStyles {
     fontWeight: FontWeight.bold,
   );
 
+  static const TextStyle heading30 = TextStyle(
+    fontFamily: 'Poppins',
+    fontSize: 30,
+  );
+
   static const TextStyle heading2 = TextStyle(
     fontFamily: 'Poppins',
     fontSize: 32,
