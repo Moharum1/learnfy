@@ -4,9 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:learnfy/core/colors.dart';
 
-class LandingPage extends StatelessWidget {
+class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
 
+  @override
+  State<LandingPage> createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> {
+  int _selectedIndex = 3;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +27,7 @@ class LandingPage extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.notifications_on_rounded,
-                    size: 30,
+                    size: 36,
                     color: Colors.black,
                   ),
                   const SizedBox(width: 10),
@@ -41,7 +47,9 @@ class LandingPage extends StatelessWidget {
                         width: 2.5,
                       ),
                       image: const DecorationImage(
-                        image: NetworkImage('https://i.imgur.com/BoN9kdC.png'),
+                        image: NetworkImage(
+                          'https://img.freepik.com/premium-photo/man-white-suit-stands-front-white-background_745528-2904.jpg?w=996',
+                        ),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -51,13 +59,17 @@ class LandingPage extends StatelessWidget {
                   SizedBox(width: 200),
                   const Text(
                     '..!مرحباً بك',
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Pop',
+                    ),
                   ),
                 ],
               ),
 
               const Text(
-                'ماذا تود أن تتعلم؟',
+                'ماذا تود أن تتعلم؟   ',
                 style: TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
@@ -122,7 +134,7 @@ class LandingPage extends StatelessWidget {
                           Align(
                             alignment: AlignmentDirectional.bottomEnd,
                             child: Text(
-                              '            التصوير الفوتوغرافي: التقط \nوشارك حياتك',
+                              'التصوير الفوتوغرافي: التقط \nوشارك حياتك',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
@@ -168,15 +180,32 @@ class LandingPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        'https://i.imgur.com/BZmPx8z.png',
-                        width: 85,
-                        height: 85,
-                        fit: BoxFit.cover,
-                      ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            'https://scandigital.com/cdn/shop/articles/AdobeStock_296909738_1400x.jpg?v=1612233314',
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        Positioned(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.7),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.play_arrow,
+                              color: ColorManager.primaryColor,
+                              size: 40,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -186,17 +215,20 @@ class LandingPage extends StatelessWidget {
                 'فئات موصى بها لك',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
+              Text("بناءأ علي إهتماماتك"),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   RecommendedCard(
-                    title: 'التصميم',
-                    imageUrl: 'https://i.imgur.com/AD3MbBi.png',
+                    title: 'السينما',
+                    image:
+                        'https://blogdesign-recipe.com/wp-content/uploads/2022/01/b29_acce_photoediting.jpg',
                   ),
                   RecommendedCard(
-                    title: 'السينما',
-                    imageUrl: 'https://i.imgur.com/SYnh9nC.png',
+                    title: 'التصميم',
+                    image:
+                        'https://iranhomedecor.com/wp-content/uploads/2021/12/final-atolieh-T-10.jpg',
                   ),
                 ],
               ),
@@ -205,14 +237,28 @@ class LandingPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
+        currentIndex: _selectedIndex,
         selectedItemColor: ColorManager.primaryColor,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.black,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.trending_up), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.wechat_outlined, size: 34),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.trending_up, size: 34),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu_book_sharp, size: 34),
+            label: '',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home, size: 34), label: ''),
         ],
       ),
     );
@@ -236,7 +282,15 @@ class CategoryButton extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(title),
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Pop',
+              fontSize: 19,
+              color: Colors.black,
+            ),
+          ),
 
           const SizedBox(width: 10),
           Icon(icon, color: ColorManager.primaryColor.withOpacity(0.7)),
@@ -248,29 +302,40 @@ class CategoryButton extends StatelessWidget {
 
 class RecommendedCard extends StatelessWidget {
   final String title;
-  final String imageUrl;
+  final String image;
 
-  const RecommendedCard({
-    super.key,
-    required this.title,
-    required this.imageUrl,
-  });
+  const RecommendedCard({super.key, required this.title, required this.image});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.42,
-      height: 160,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Stack(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width * 0.42,
+              height: 160,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                image: DecorationImage(
+                  image: NetworkImage(image),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 10,
+              left: 10,
+              child: GestureDetector(
+                onTap: () {},
+                child: Icon(Icons.bookmark, color: Colors.white, size: 28),
+              ),
+            ),
+          ],
         ),
-      ),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
+        const SizedBox(height: 8),
+        Container(
           padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
             color: Colors.white70,
@@ -284,10 +349,11 @@ class RecommendedCard extends StatelessWidget {
             style: const TextStyle(
               color: ColorManager.primaryColor,
               fontWeight: FontWeight.bold,
+              fontSize: 20,
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
