@@ -3,6 +3,7 @@ class Assets {
   static const _icons = 'assets/icons';
 
   // Images
+  static const otpImage = '$_images/otp_image.webp';
 
   // Icons (SVG or PNG)
   static const String playIcon = '$_icons/play.svg';
