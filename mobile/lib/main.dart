@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:learnfy/core/theme/app_theme.dart';
-import 'package:learnfy/features/auth/presentation/views/forget_pass_page.dart';
+import 'package:learnfy/features/auth/presentation/views/forget_pass_view.dart';
 import 'package:learnfy/features/auth/presentation/views/on_boarding_view.dart';
 import 'features/auth/presentation/views/sign_up_page.dart';
 
