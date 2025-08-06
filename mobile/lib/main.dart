@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:learnfy/features/auth/presentation/views/on_boarding_view.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
-      home: const HomeView(),
+      home: const OnboardingView(),
     );
   }
 }
