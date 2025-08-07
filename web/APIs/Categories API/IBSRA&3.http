@@ -1,0 +1,6 @@
+@IBSRA_3_HostAddress = http://localhost:5058
+
+GET {{IBSRA_3_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
