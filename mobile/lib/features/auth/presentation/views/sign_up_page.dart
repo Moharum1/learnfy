@@ -7,6 +7,7 @@ import 'package:learnfy/features/auth/presentation/widgets/auth_text_form_field.
 import 'package:learnfy/features/auth/presentation/widgets/custom_check_box.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/assets.dart';
+import '../../../../core/routing/app_routes.dart';
 import '../widgets/dont_have_account_widget.dart';
 import '../widgets/terms_and_conditions_widget.dart';
 
@@ -43,7 +44,7 @@ class _SignUpPageState extends State<SignUpPage> {
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     return Scaffold(
-      // appBar: buildAppBar(title: 'New Account'),
+      appBar: AppBar(title:Text('New Account')),
       body: BlocProvider(
         create: (context) => SignUpCubit(),
         child: Padding(
@@ -106,9 +107,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     PrimaryButton(
                       label: 'Create New Account',
                       onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          log('Account created successfully');
-                        }
+                        // validatinon to sign up
+                        // if (formKey.currentState!.validate()) {
+                        //   log('Account created successfully');
+                          
+                        // }
+                        Navigator.pushNamed(context, AppRoutes.otp);
+                        print("hello");
                       },
                     ),
                     SizedBox(height: 23.5),

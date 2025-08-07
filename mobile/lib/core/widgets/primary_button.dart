@@ -25,7 +25,7 @@ class PrimaryButton extends StatelessWidget {
       width: width ?? double.infinity,
       height: height ?? 57.0,
       child: ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: onPressed,
         label: Text(
           label,
           style: AppTextStyles.heading5.copyWith(color: AppColors.white),
