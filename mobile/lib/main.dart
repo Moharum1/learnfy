@@ -7,13 +7,7 @@ import 'package:learnfy/features/auth/presentation/views/forget_pass_view.dart';
 import 'package:learnfy/features/auth/presentation/views/on_boarding_view.dart';
 import 'features/auth/presentation/views/sign_up_page.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+import 'core/features/landing/presentation/view/landing_page.dart';
 
 
 void main() {
