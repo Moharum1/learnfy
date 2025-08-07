@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:learnfy/core/colors.dart';
+import 'package:learnfy/core/features/landing/presentation/widgets/custom_app_bar.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -22,59 +23,7 @@ class _LandingPageState extends State<LandingPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.notifications_on_rounded,
-                    size: 36,
-                    color: Colors.black,
-                  ),
-                  const SizedBox(width: 10),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          ColorManager.primaryColor,
-                          ColorManager.primaryColor.withOpacity(0.2),
-                        ],
-                      ),
-
-                      color: ColorManager.primaryColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: ColorManager.primaryColor,
-                        width: 2.5,
-                      ),
-                      image: const DecorationImage(
-                        image: NetworkImage(
-                          'https://img.freepik.com/premium-photo/man-white-suit-stands-front-white-background_745528-2904.jpg?w=996',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    width: 30,
-                    height: 30,
-                  ),
-                  SizedBox(width: 200),
-                  const Text(
-                    '..!مرحباً بك',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Pop',
-                    ),
-                  ),
-                ],
-              ),
-
-              const Text(
-                'ماذا تود أن تتعلم؟   ',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
+              const CustomAppBar(),     
               const SizedBox(height: 16),
               TextField(
                 textAlign: TextAlign.right,
