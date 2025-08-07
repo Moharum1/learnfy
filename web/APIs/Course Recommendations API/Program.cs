@@ -57,6 +57,12 @@ namespace IBSRA_2
                 });
             });
 
+            // Add AutoMapper
+            builder.Services.AddAutoMapper(typeof(CourseMappingProfile));
+
+            // Register the CourseService (this line should already exist)
+            builder.Services.AddScoped<ICourseService, CourseService>();
+            
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -79,4 +85,5 @@ namespace IBSRA_2
             app.Run();
         }
     }
+
 }
