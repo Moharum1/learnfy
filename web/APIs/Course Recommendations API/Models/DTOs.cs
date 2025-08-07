@@ -1,25 +1,52 @@
-﻿namespace YourApp.Models.DTOs
+namespace YourApp.Models.DTOs
 {
-    public record LoginRequest(string Email, string Password);
-
-    public record RegisterRequest(
-        string Name,
-        int Age,
-        string PhoneNumber,
-        string Email,
-        string Username,
-        string Password
+    public record CourseDto(
+        int Id,
+        string CourseName,
+        string Category,
+        string? ImageUrl,
+        string? Description,
+        string? Instructor,
+        string? Duration,
+        decimal? Rating,
+        decimal? Price,
+        bool IsRecommended
     );
 
-    public record ForgotPasswordRequest(string Email);
-    public record ResetPasswordRequest(string ResetToken, string NewPassword);
+    public record CourseRecommendationDto(
+        int Id,
+        string CourseName,
+        string Category,
+        string? ImageUrl,
+        string? Description,
+        string? Instructor,
+        string? Duration,
+        decimal? Rating,
+        decimal? Price,
+        decimal RecommendationScore
+    );
 
-    public record AuthResponse(
+    public record CourseSearchRequest(
+        string? SearchTerm = null,
+        string? Category = null,
+        decimal? MinPrice = null,
+        decimal? MaxPrice = null,
+        decimal? MinRating = null,
+        string? Instructor = null,
+        int Page = 1,
+        int PageSize = 10,
+        string SortBy = "rating",
+        string SortOrder = "desc"
+    );
+
+    public record CourseRecommendationsResponse(
         bool Success,
         string Message,
-        string? Token = null,
-        UserDto? User = null
+        List<CourseRecommendationDto> Recommendations,
+        int TotalCount,
+        int CurrentPage,
+        int TotalPages
     );
 
-    public record UserDto(int Id, string Name, string Username, string Email);
+    public record ApiResponse<T>(bool Success, string Message, T? Data = default);
 }
