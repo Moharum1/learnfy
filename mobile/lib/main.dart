@@ -3,8 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learnfy/core/routing/app_router.dart';
 import 'package:learnfy/core/routing/app_routes.dart';
 import 'package:learnfy/core/theme/app_theme.dart';
-import 'package:learnfy/features/user_profile/presentation/views/edit_profile_view.dart';
-import 'package:learnfy/features/auth/presentation/manager/otp_cubit/otp_cubit.dart';
+import 'package:learnfy/features/auth/presentation/views/forget_pass_view.dart';
+import 'package:learnfy/features/auth/presentation/views/on_boarding_view.dart';
+import 'features/auth/presentation/views/sign_up_page.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
 
 
 void main() {
@@ -30,4 +39,3 @@ class Learnfy extends StatelessWidget {
     );
   }
 }
-
