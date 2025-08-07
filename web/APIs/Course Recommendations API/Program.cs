@@ -22,9 +22,6 @@ namespace IBSRA_2
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // AutoMapper
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
-
             // Services
             builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -87,3 +84,4 @@ namespace IBSRA_2
     }
 
 }
+
