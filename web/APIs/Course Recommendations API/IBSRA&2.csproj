@@ -7,8 +7,12 @@
     <RootNamespace>IBSRA_2</RootNamespace>
   </PropertyGroup>
 
+<PackageReference Include="AutoMapper" Version="12.0.1" />
+<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
 </Project>
+
