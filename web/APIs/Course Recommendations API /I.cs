@@ -1,1 +1,0 @@
-Course Recommendations API

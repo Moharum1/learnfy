@@ -1,2 +1,0 @@
-Learnfy Web Interface
-```
