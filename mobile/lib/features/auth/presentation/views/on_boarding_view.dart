@@ -35,7 +35,6 @@ class _OnboardingViewState extends State<OnboardingView> {
     return BlocProvider(
       create: (context) => OnboardingCubit(pages: pages),
       child: Scaffold(
-        appBar: AppBar(backgroundColor: Color(0xffFFEBFE)),
         backgroundColor: Color(0xffFFEBFE),
         body: BlocConsumer<OnboardingCubit, OnboardingState>(
           listener: (context, state) {
@@ -84,7 +83,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                       text: 'Next',
                       onPressed: () {
                         if (state.isLastPage) {
-                          _navigateToLecture(context);
+                          _navigateToSignUpScreen(context);
                         } else {
                           context.read<OnboardingCubit>().nextPage();
                           _pageController.nextPage(
@@ -106,7 +105,7 @@ class _OnboardingViewState extends State<OnboardingView> {
     );
   }
 
-  void _navigateToLecture(BuildContext context) {
+  void _navigateToSignUpScreen(BuildContext context) {
     Navigator.pushReplacementNamed(
       context,
       AppRoutes.register,

@@ -1,7 +1,10 @@
-
 import 'package:flutter/material.dart';
 
-import '../../../../colors.dart';
+import '../../../../core/theme/app_colors.dart';
+
+
+
+
 
 class CategoryButton extends StatelessWidget {
   final String title;
@@ -14,9 +17,9 @@ class CategoryButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.withOpacity(0.3)),
+        border: Border.all(color:AppColors.black40),
         borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
+        color: AppColors.white,
       ),
       child: Row(
         children: [
@@ -31,7 +34,7 @@ class CategoryButton extends StatelessWidget {
           ),
 
           const SizedBox(width: 10),
-          Icon(icon, color: ColorManager.primaryColor.withOpacity(0.7)),
+          Icon(icon, color: AppColors.primary60),
         ],
       ),
     );

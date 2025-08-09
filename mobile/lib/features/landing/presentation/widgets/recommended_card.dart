@@ -1,7 +1,9 @@
-
 import 'package:flutter/material.dart';
 
-import '../../../../colors.dart';
+import '../../../../core/theme/app_colors.dart';
+
+
+
 
 class RecommendedCard extends StatelessWidget {
   final String title;
@@ -32,7 +34,7 @@ class RecommendedCard extends StatelessWidget {
               left: 10,
               child: GestureDetector(
                 onTap: () {},
-                child: Icon(Icons.bookmark, color: Colors.white, size: 28),
+                child: Icon(Icons.bookmark, color: AppColors.white, size: 28),
               ),
             ),
           ],
@@ -41,7 +43,7 @@ class RecommendedCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
-            color: Colors.white70,
+            color: AppColors.black60,
             borderRadius: BorderRadius.only(
               bottomRight: Radius.circular(15),
               bottomLeft: Radius.circular(15),
@@ -50,7 +52,7 @@ class RecommendedCard extends StatelessWidget {
           child: Text(
             title,
             style: const TextStyle(
-              color: ColorManager.primaryColor,
+              color: AppColors.primary90,
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),

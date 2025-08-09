@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:learnfy/core/helper_functions/validator.dart';
 import 'package:learnfy/core/widgets/primary_button.dart';
@@ -6,7 +5,7 @@ import 'package:learnfy/features/auth/presentation/manager/sign_up_cubit/sign_up
 import 'package:learnfy/features/auth/presentation/widgets/auth_text_form_field.dart';
 import 'package:learnfy/features/auth/presentation/widgets/custom_check_box.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/assets.dart';
+import '../../../../core/res/app_icons.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../widgets/dont_have_account_widget.dart';
 import '../widgets/terms_and_conditions_widget.dart';
@@ -76,8 +75,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               .togglePasswordVisible(),
                           label: 'Password',
                           suffixIcon: state.isPasswordVisible
-                              ? Assets.eyeSlashIcon
-                              : Assets.eyeIcon,
+                              ? AppIcons.eyeSlashIcon
+                              : AppIcons.eyeIcon,
                           obscureText: !state.isPasswordVisible,
                           validator: (password) => validatePassword(password!),
                           controller: passwordController,
@@ -113,7 +112,6 @@ class _SignUpPageState extends State<SignUpPage> {
                           
                         // }
                         Navigator.pushNamed(context, AppRoutes.otp);
-                        print("hello");
                       },
                     ),
                     SizedBox(height: 23.5),

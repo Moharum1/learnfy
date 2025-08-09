@@ -3,11 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learnfy/core/routing/app_router.dart';
 import 'package:learnfy/core/routing/app_routes.dart';
 import 'package:learnfy/core/theme/app_theme.dart';
-import 'package:learnfy/features/auth/presentation/views/forget_pass_view.dart';
-import 'package:learnfy/features/auth/presentation/views/on_boarding_view.dart';
-import 'features/auth/presentation/views/sign_up_page.dart';
-
-import 'core/features/landing/presentation/view/landing_page.dart';
+import 'features/auth/presentation/manager/otp_cubit/otp_cubit.dart';
 
 
 void main() {
@@ -27,7 +23,6 @@ class Learnfy extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightMode,
-      home: EditProfileView(),
       onGenerateRoute:AppRouter.generateRoute,
       initialRoute: AppRoutes.onboarding,
     );

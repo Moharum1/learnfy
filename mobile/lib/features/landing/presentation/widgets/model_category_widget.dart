@@ -1,12 +1,14 @@
-
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
-import '../../../../colors.dart';
+import '../../../../core/theme/app_colors.dart';
 
-class model_category_widget extends StatelessWidget {
-  const model_category_widget({
+
+
+
+
+class ModelCategoryWidget extends StatelessWidget {
+  const ModelCategoryWidget({
     super.key,
   });
 
@@ -51,12 +53,12 @@ class model_category_widget extends StatelessWidget {
                       TextSpan(
                         text: '   • 41 دقيقة ',
                         style: TextStyle(
-                          color: ColorManager.primaryColor,
+                          color: AppColors.primary90,
                         ),
                       ),
                       TextSpan(
                         text: 'متبقية',
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(color: AppColors.black40),
                       ),
                     ],
                   ),
@@ -66,7 +68,7 @@ class model_category_widget extends StatelessWidget {
                   angle: math.pi,
                   child: LinearProgressIndicator(
                     value: 0.27,
-                    color: ColorManager.primaryColor,
+                    color: AppColors.primary90,
                   ),
                 ),
               ],
@@ -88,12 +90,12 @@ class model_category_widget extends StatelessWidget {
               Positioned(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.7),
+                    color: AppColors.white,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.play_arrow,
-                    color: ColorManager.primaryColor,
+                    color: AppColors.primary90,
                     size: 40,
                   ),
                 ),
