@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -6,6 +6,7 @@ using System.Text;
 using YourApp.Data;
 using YourApp.Models;
 using YourApp.Models.DTOs;
+using YourApp.Mappers;
 using BCrypt.Net;
 
 namespace YourApp.Services
@@ -30,7 +31,7 @@ namespace YourApp.Services
                 return new AuthResponse(false, "Invalid email or password");
 
             var token = GenerateJwtToken(user);
-            var userDto = new UserDto(user.Id, user.Name, user.Username, user.Email);
+            var userDto = user.ToUserDto(); // Using mapper
 
             return new AuthResponse(true, "Login successful", token, userDto);
         }
@@ -40,21 +41,14 @@ namespace YourApp.Services
             if (await _context.Users.AnyAsync(u => u.Email == request.Email || u.Username == request.Username))
                 return new AuthResponse(false, "User with this email or username already exists");
 
-            var user = new User
-            {
-                Name = request.Name,
-                Age = request.Age,
-                PhoneNumber = request.PhoneNumber,
-                Email = request.Email,
-                Username = request.Username,
-                PasswordHash = BCrypt.HashPassword(request.Password)
-            };
+            var user = request.ToUser(); // Using mapper
+            user.PasswordHash = BCrypt.HashPassword(request.Password);
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             var token = GenerateJwtToken(user);
-            var userDto = new UserDto(user.Id, user.Name, user.Username, user.Email);
+            var userDto = user.ToUserDto(); // Using mapper
 
             return new AuthResponse(true, "Registration successful", token, userDto);
         }
@@ -62,7 +56,7 @@ namespace YourApp.Services
         public async Task<AuthResponse> ForgotPasswordAsync(ForgotPasswordRequest request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-
+            
             if (user == null)
                 return new AuthResponse(false, "No user found with this email address");
 
@@ -77,8 +71,8 @@ namespace YourApp.Services
 
         public async Task<AuthResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u =>
-                u.ResetToken == request.ResetToken &&
+            var user = await _context.Users.FirstOrDefaultAsync(u => 
+                u.ResetToken == request.ResetToken && 
                 u.ResetTokenExpiry > DateTime.UtcNow);
 
             if (user == null)
@@ -108,7 +102,7 @@ namespace YourApp.Services
                 Issuer = _config["Jwt:Issuer"],
                 Audience = _config["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
+                    new SymmetricSecurityKey(key), 
                     SecurityAlgorithms.HmacSha256Signature)
             };
 
