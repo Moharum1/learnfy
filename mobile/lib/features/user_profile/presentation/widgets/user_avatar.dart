@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:learnfy/core/assets.dart';
 import 'package:learnfy/core/theme/app_colors.dart';
+import '../../../../core/res/app_images.dart';
 
 class UserAvatar extends StatelessWidget {
   const UserAvatar({
@@ -13,7 +13,7 @@ class UserAvatar extends StatelessWidget {
       children: [
         const CircleAvatar(
           radius: 60,
-          backgroundImage: AssetImage(Assets.profileImg),
+          backgroundImage: AssetImage(AppImages.profileImg),
         ),
         Positioned(
           bottom: 0,

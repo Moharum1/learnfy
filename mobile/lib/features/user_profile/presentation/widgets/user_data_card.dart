@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:learnfy/core/assets.dart';
 import 'package:learnfy/core/theme/app_text_styles.dart';
 import 'package:learnfy/features/user_profile/presentation/views/settings_view.dart';
+
+import '../../../../core/res/app_images.dart';
 
 class UserDataCard extends StatelessWidget {
   const UserDataCard({
@@ -21,7 +22,7 @@ class UserDataCard extends StatelessWidget {
           CircleAvatar(
             radius: 30,
             child: Image.asset(
-              Assets.profileImg,
+              AppImages.profileImg,
               fit: BoxFit.fill,
             ),
           ),

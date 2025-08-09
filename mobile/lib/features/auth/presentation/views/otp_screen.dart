@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pinput/pinput.dart';
-import '../../../../core/assets.dart';
+import 'package:learnfy/core/routing/app_routes.dart';
+import 'package:learnfy/features/auth/presentation/manager/otp_cubit/otp_cubit.dart';
+import 'package:learnfy/features/auth/presentation/manager/otp_cubit/otp_states.dart';
+import 'package:learnfy/features/auth/presentation/widgets/otp_widgets/otp_phone_field.dart';
+import 'package:learnfy/features/auth/presentation/widgets/otp_widgets/otp_verification_form.dart';
+import 'package:learnfy/features/auth/presentation/widgets/primary_button.dart';
+import '../../../../core/res/app_images.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../manager/otp_cubit/otp_cubit.dart';
-import '../manager/otp_cubit/otp_states.dart';
-import '../widgets/continue_button.dart';
-import '../widgets/phone_field.dart';
-import '../widgets/verify_button.dart';
 
 class OTPScreen extends StatefulWidget {
   const OTPScreen({super.key});
@@ -17,139 +17,105 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+
+  bool _isOnFirstPage = true;
+
+  final PageController _pageController = PageController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
-
   @override
-  void dispose() {
-    _phoneController.dispose();
-    _codeController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return Scaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Image.asset(
+              width: double.infinity,
+              AppImages.otpImage,
+              fit: BoxFit.cover,
+            ),
+            const SizedBox(
+              height: 24,
+            ),
+            const Text(
+              "OTP Verification",
+              style: AppTextStyles.heading3,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Image.asset(
-                      Assets.otpImage,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    const Text(
-                      "OTP Verification",
-                      style: AppTextStyles.heading3,
-                    ),
-                    BlocConsumer<OTPCubit, OTPState>(
-                      builder: (context, state) {
-                      if(state is OTPSendSuccess || state is OTPVerifyingLoading || state is OTPVerifyFailure || state is OTPVerifySuccess)
-                      {
-                          return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Pinput(
-                                  controller: _codeController,
-                                ),
-                                const SizedBox(height: 24),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text("Didn't receive the code? "),
-                                    TextButton(
-                                      onPressed: () {},
-                                      child: const Text("Resend Code"),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                      }else {
-                         return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              const Text(
-                                "we will send you one-time \n password to this mobile number",
-                                textAlign: TextAlign.center,
-                                style: AppTextStyles.bodyLargeRegular,
-                              ),
-                              const SizedBox(height: 48,),
-                              PhoneField(
-                                phoneController: _phoneController,
-                              ),
-                            ],
-                          ),
-                        );
-                          
-                        }
-                        
-                        
-                      },
-                      listener: (context, state) {
-                        if (state is OTPVerifySuccess) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => const Scaffold(
-                                body: Center(child: Text("home screen")),
-                              ),
-                            ),
-                          );
-                        }
-                        if (state is OTPVerifyFailure ||
-                            state is OTPSendFailure) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("There is an error")),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
+              child: PageView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                children: [
+                  
+                  OTPPhoneField(
+                    phoneController:_phoneController 
+                  ),
+                  OTPVerificationField(
+                    codeController: _codeController,
+                    phoneNumber: "01550855405"
+                  )
+                  
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: BlocBuilder<OTPCubit, OTPState>(
-                builder: (context, state) {
-                   if (state is OTPSendingLoading ||
-                            state is OTPVerifyingLoading) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                            }
-                  else if (state is OTPSendSuccess) {
-                    return VerifyButton(
-                      onTap: () {
-                        // Verify code logic
-                        if(_codeController.text.isNotEmpty){
-                          BlocProvider.of<OTPCubit>(context).verify();
+            BlocConsumer<OTPCubit , OTPState>(
+              builder: (context, state) {
+                if(state is OTPVerifyLoading){
+                  return Center(child: CircularProgressIndicator());
+                } 
+                else{
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: PrimaryButton(
+                      onPressed: (){
+                        if(_isOnFirstPage){
+                          _pageController.nextPage(
+                            duration: Duration(
+                              milliseconds: 250
+                            ), 
+                            curve: Curves.linear
+                          );
+                          setState(() {
+                            _isOnFirstPage = false;
+                          });
+                          if(_phoneController.text.isNotEmpty){
+                            // Send OTP Code
+
+                          }
                         }
-                      },
-                    );
-                  } else {
-                    return ContinueButton(
-                      onTap: () {
-                        if(_phoneController.text.isNotEmpty){
-                          BlocProvider.of<OTPCubit>(context).sendSuccess();
+                        else{
+                          // Verify OTP Code
+                          Navigator.pushReplacementNamed(context, AppRoutes.mainScreen);
                         }
-                        // Send verification logic
-                      },
-                    );
-                  }
-                },
-              ),
-            ),
+                    
+                      }, 
+                      text: _isOnFirstPage ? "GET OTP" : "Verify",
+                    ),
+                  );
+                }
+              },
+              listener: (context , state){
+                ScaffoldMessenger.of(context).clearSnackBars();
+                if(state is OTPVerifySuccess){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("go to home"))
+                  );
+                  return;
+                }
+
+                if(state is OTPVerifyFailure){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("YOUR CODE IS WRONG"))
+                  );
+                  return;
+                }
+              }
+            )
           ],
         ),
       ),

@@ -7,8 +7,8 @@ import 'package:learnfy/features/auth/presentation/widgets/auth_text_form_field.
 
 class ForgetPasswordView extends StatelessWidget {
   ForgetPasswordView({super.key});
-  TextEditingController emailController = TextEditingController();
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {

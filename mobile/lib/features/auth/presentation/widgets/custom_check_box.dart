@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:learnfy/core/assets.dart';
 import 'package:learnfy/core/theme/app_colors.dart';
+
+import '../../../../core/res/app_icons.dart';
 
 class CustomCheckbox extends StatelessWidget {
   final bool value;
@@ -31,7 +32,7 @@ class CustomCheckbox extends StatelessWidget {
         child: value
             ? Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: SvgPicture.asset(Assets.checkIcon),
+                child: SvgPicture.asset(AppIcons.checkIcon),
               )
             : null,
       ),
