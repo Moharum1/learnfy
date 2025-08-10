@@ -1,55 +1,38 @@
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using YourApp.Data;
 using YourApp.Models;
 using YourApp.Models.DTOs;
+using YourApp.Repositories;
 
 namespace YourApp.Services
 {
     public class CourseService : ICourseService
     {
-        private readonly AppDbContext _context;
+        private readonly ICourseRepository _courseRepository;
         private readonly IMapper _mapper;
 
-        public CourseService(AppDbContext context, IMapper mapper)
+        public CourseService(ICourseRepository courseRepository, IMapper mapper)
         {
-            _context = context;
+            _courseRepository = courseRepository;
             _mapper = mapper;
         }
 
         public async Task<CourseRecommendationsResponse> GetCourseRecommendationsAsync(CourseSearchRequest request)
         {
-            var query = _context.Courses.AsQueryable();
+            // Business logic: Get count for pagination
+            var totalCount = await _courseRepository.GetCategoryCountAsync(request.Category ?? "");
+            var totalPages = CalculateTotalPages(totalCount, request.PageSize);
 
-            // Apply filters
-            if (!string.IsNullOrEmpty(request.Category))
-                query = query.Where(c => c.Category == request.Category);
+            // Repository handles data retrieval
+            var courses = await _courseRepository.GetByCategoryAsync(
+                request.Category ?? "", 
+                request.Page, 
+                request.PageSize);
 
-            var totalCount = await query.CountAsync();
-            var totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
-
-            // Get courses from database
-            var courses = await query
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync();
-
-            // Use mapper to convert to DTOs
+            // Business logic: Convert to DTOs using mapper
             var recommendations = _mapper.Map<List<CourseRecommendationDto>>(courses);
 
-            // Apply sorting to DTOs
-            recommendations = request.SortBy?.ToLower() switch
-            {
-                "price" => request.SortOrder == "desc" 
-                    ? recommendations.OrderByDescending(c => c.Price).ToList()
-                    : recommendations.OrderBy(c => c.Price).ToList(),
-                "name" => request.SortOrder == "desc"
-                    ? recommendations.OrderByDescending(c => c.CourseName).ToList()
-                    : recommendations.OrderBy(c => c.CourseName).ToList(),
-                _ => request.SortOrder == "desc"
-                    ? recommendations.OrderByDescending(c => c.RecommendationScore).ToList()
-                    : recommendations.OrderBy(c => c.RecommendationScore).ToList()
-            };
+            // Business logic: Apply sorting
+            recommendations = ApplySorting(recommendations, request.SortBy, request.SortOrder);
 
             return new CourseRecommendationsResponse(
                 true,
@@ -63,33 +46,19 @@ namespace YourApp.Services
 
         public async Task<CourseRecommendationsResponse> GetPersonalizedRecommendationsAsync(int userId, int count = 5)
         {
-            // Get courses not already recommended to the user
-            var excludedCourseIds = await _context.UserCourseRecommendations
-                .Where(ucr => ucr.UserId == userId)
-                .Select(ucr => ucr.CourseId)
-                .ToListAsync();
+            // Business logic: Get excluded courses for this user
+            var excludedCourseIds = await _courseRepository.GetUserRecommendedCourseIdsAsync(userId);
 
-            var courses = await _context.Courses
-                .Where(c => !excludedCourseIds.Contains(c.Id))
-                .OrderByDescending(c => c.Rating)
-                .ThenByDescending(c => c.IsRecommended)
-                .Take(count)
-                .ToListAsync();
+            // Repository handles data retrieval with exclusions
+            var courses = await _courseRepository.GetExcludingCourseIdsAsync(excludedCourseIds, count);
 
-            // Use mapper to convert to DTOs
+            // Business logic: Convert to DTOs using mapper
             var recommendations = _mapper.Map<List<CourseRecommendationDto>>(courses);
 
-            // Apply personalized scoring after mapping
-            foreach (var recommendation in recommendations)
-            {
-                var originalCourse = courses.First(c => c.Id == recommendation.Id);
-                recommendation = recommendation with 
-                { 
-                    RecommendationScore = (originalCourse.Rating ?? 0) * 1.5m + (originalCourse.IsRecommended ? 2.0m : 0) 
-                };
-            }
+            // Business logic: Apply personalized scoring algorithm
+            recommendations = ApplyPersonalizedScoring(recommendations, courses);
 
-            // Sort by recommendation score
+            // Business logic: Sort by recommendation score
             recommendations = recommendations.OrderByDescending(c => c.RecommendationScore).ToList();
 
             return new CourseRecommendationsResponse(
@@ -104,12 +73,10 @@ namespace YourApp.Services
 
         public async Task<CourseRecommendationsResponse> GetTrendingCoursesAsync(int count = 10)
         {
-            var courses = await _context.Courses
-                .OrderByDescending(c => c.Rating)
-                .Take(count)
-                .ToListAsync();
+            // Repository handles data retrieval
+            var courses = await _courseRepository.GetTopRatedAsync(count);
 
-            // Use mapper to convert to DTOs
+            // Business logic: Convert to DTOs using mapper
             var trendingCourses = _mapper.Map<List<CourseRecommendationDto>>(courses);
 
             return new CourseRecommendationsResponse(
@@ -124,13 +91,14 @@ namespace YourApp.Services
 
         public async Task<ApiResponse<CourseDto>> GetCourseByIdAsync(int courseId)
         {
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(c => c.Id == courseId);
+            // Repository handles data retrieval
+            var course = await _courseRepository.GetByIdAsync(courseId);
 
+            // Business logic: Validate course exists
             if (course == null)
                 return new ApiResponse<CourseDto>(false, "Course not found");
 
-            // Use mapper to convert to DTO
+            // Business logic: Convert to DTO using mapper
             var courseDto = _mapper.Map<CourseDto>(course);
 
             return new ApiResponse<CourseDto>(true, "Course details retrieved successfully", courseDto);
@@ -138,59 +106,33 @@ namespace YourApp.Services
 
         public async Task<CourseRecommendationsResponse> SearchCoursesAsync(CourseSearchRequest request)
         {
-            var query = _context.Courses.AsQueryable();
+            // Business logic: Get search count for pagination
+            var totalCount = await _courseRepository.GetSearchCountAsync(
+                request.SearchTerm,
+                request.Category,
+                request.MinPrice,
+                request.MaxPrice,
+                request.MinRating,
+                request.Instructor);
 
-            // Apply search filters
-            if (!string.IsNullOrEmpty(request.SearchTerm))
-            {
-                var searchTerm = request.SearchTerm.ToLower();
-                query = query.Where(c => 
-                    c.CourseName.ToLower().Contains(searchTerm) ||
-                    c.Description!.ToLower().Contains(searchTerm) ||
-                    c.Instructor!.ToLower().Contains(searchTerm)
-                );
-            }
+            var totalPages = CalculateTotalPages(totalCount, request.PageSize);
 
-            if (!string.IsNullOrEmpty(request.Category))
-                query = query.Where(c => c.Category == request.Category);
+            // Repository handles complex search query
+            var courses = await _courseRepository.SearchCoursesAsync(
+                request.SearchTerm,
+                request.Category,
+                request.MinPrice,
+                request.MaxPrice,
+                request.MinRating,
+                request.Instructor,
+                request.Page,
+                request.PageSize);
 
-            if (request.MinPrice.HasValue)
-                query = query.Where(c => c.Price >= request.MinPrice);
-
-            if (request.MaxPrice.HasValue)
-                query = query.Where(c => c.Price <= request.MaxPrice);
-
-            if (request.MinRating.HasValue)
-                query = query.Where(c => c.Rating >= request.MinRating);
-
-            if (!string.IsNullOrEmpty(request.Instructor))
-                query = query.Where(c => c.Instructor == request.Instructor);
-
-            var totalCount = await query.CountAsync();
-            var totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
-
-            // Get courses from database
-            var courses = await query
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync();
-
-            // Use mapper to convert to DTOs
+            // Business logic: Convert to DTOs using mapper
             var results = _mapper.Map<List<CourseRecommendationDto>>(courses);
 
-            // Apply sorting to DTOs
-            results = request.SortBy?.ToLower() switch
-            {
-                "price" => request.SortOrder == "desc"
-                    ? results.OrderByDescending(c => c.Price).ToList()
-                    : results.OrderBy(c => c.Price).ToList(),
-                "name" => request.SortOrder == "desc"
-                    ? results.OrderByDescending(c => c.CourseName).ToList()
-                    : results.OrderBy(c => c.CourseName).ToList(),
-                _ => request.SortOrder == "desc"
-                    ? results.OrderByDescending(c => c.RecommendationScore).ToList()
-                    : results.OrderBy(c => c.RecommendationScore).ToList()
-            };
+            // Business logic: Apply sorting
+            results = ApplySorting(results, request.SortBy, request.SortOrder);
 
             return new CourseRecommendationsResponse(
                 true,
@@ -200,6 +142,56 @@ namespace YourApp.Services
                 request.Page,
                 totalPages
             );
+        }
+
+        // Business logic helper methods
+        private int CalculateTotalPages(int totalCount, int pageSize)
+        {
+            return (int)Math.Ceiling(totalCount / (double)pageSize);
+        }
+
+        private List<CourseRecommendationDto> ApplySorting(
+            List<CourseRecommendationDto> courses, 
+            string? sortBy, 
+            string sortOrder)
+        {
+            return sortBy?.ToLower() switch
+            {
+                "price" => sortOrder == "desc"
+                    ? courses.OrderByDescending(c => c.Price).ToList()
+                    : courses.OrderBy(c => c.Price).ToList(),
+                "name" => sortOrder == "desc"
+                    ? courses.OrderByDescending(c => c.CourseName).ToList()
+                    : courses.OrderBy(c => c.CourseName).ToList(),
+                _ => sortOrder == "desc"
+                    ? courses.OrderByDescending(c => c.RecommendationScore).ToList()
+                    : courses.OrderBy(c => c.RecommendationScore).ToList()
+            };
+        }
+
+        private List<CourseRecommendationDto> ApplyPersonalizedScoring(
+            List<CourseRecommendationDto> recommendations, 
+            List<Course> originalCourses)
+        {
+            var scoredRecommendations = new List<CourseRecommendationDto>();
+
+            foreach (var recommendation in recommendations)
+            {
+                var originalCourse = originalCourses.First(c => c.Id == recommendation.Id);
+                var personalizedScore = CalculatePersonalizedScore(originalCourse);
+
+                scoredRecommendations.Add(recommendation with { RecommendationScore = personalizedScore });
+            }
+
+            return scoredRecommendations;
+        }
+
+        private decimal CalculatePersonalizedScore(Course course)
+        {
+            // Business logic: Personalized scoring algorithm
+            var baseScore = course.Rating ?? 0;
+            var recommendedBonus = course.IsRecommended ? 2.0m : 0;
+            return baseScore * 1.5m + recommendedBonus;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using YourApp.Models.DTOs;
+using YourApp.Models.DTOs;
 
 namespace YourApp.Services
 {
@@ -10,4 +10,3 @@ namespace YourApp.Services
         Task<AuthResponse> ResetPasswordAsync(ResetPasswordRequest request);
     }
 }
-

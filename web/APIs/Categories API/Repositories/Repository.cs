@@ -1,78 +1,56 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using IBSRA.Data;
 using IBSRA.Models;
 
 namespace IBSRA.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class CategoryRepository : ICategoryRepository
     {
         protected readonly AppDbContext _context;
-        protected readonly DbSet<T> _dbSet;
 
-        public Repository(AppDbContext context)
+        public CategoryRepository(AppDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>();
         }
 
-        public virtual async Task<IEnumerable<T>> GetAllAsync()
+        public virtual async Task<IEnumerable<Category>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await _context.Categories
+                .Include(c => c.Courses)
+                .ToListAsync();
         }
 
-        public virtual async Task<T> GetByIdAsync(int id)
+        public virtual async Task<Category> GetByIdAsync(int id)
         {
-            return await _dbSet.FindAsync(id);
+            return await _context.Categories
+                .Include(c => c.Courses)
+                .FirstOrDefaultAsync(c => c.ID == id);
         }
 
-        public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        public async Task<Category> GetByNameAsync(string name)
         {
-            return await _dbSet.Where(predicate).ToListAsync();
+            return await _context.Categories
+                .Include(c => c.Courses)
+                .FirstOrDefaultAsync(c => c.Name == name);
         }
 
-        public virtual async Task<T> AddAsync(T entity)
+        public async Task<IEnumerable<Category>> GetActiveCategoriesAsync()
         {
-            _dbSet.Add(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            return await _context.Categories
+                .Include(c => c.Courses)
+                .Where(c => c.IsActive)
+                .OrderBy(c => c.DisplayOrder)
+                .ThenBy(c => c.Name)
+                .ToListAsync();
         }
-
-        public virtual async Task UpdateAsync(T entity)
-        {
-            _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-        }
-
-        public virtual async Task DeleteAsync(int id)
-        {
-            var entity = await GetByIdAsync(id);
-            if (entity != null)
-            {
-                _dbSet.Remove(entity);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public virtual async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
-        {
-            return predicate == null
-                ? await _dbSet.CountAsync()
-                : await _dbSet.CountAsync(predicate);
-        }
-    }
-
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
-    {
-        public CategoryRepository(AppDbContext context) : base(context) { }
 
         public async Task<IEnumerable<Category>> GetPopularCategoriesAsync(int count)
         {
-            return await _dbSet
+            return await _context.Categories
                 .Include(c => c.Courses)
                 .Where(c => c.IsActive)
                 .OrderByDescending(c => c.Courses.Count)
@@ -80,21 +58,37 @@ namespace IBSRA.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Category> GetByNameAsync(string name)
+        public virtual async Task<Category> AddAsync(Category entity)
         {
-            return await _dbSet
-                .Include(c => c.Courses)
-                .FirstOrDefaultAsync(c => c.Name == name);
+            _context.Categories.Add(entity);
+            await _context.SaveChangesAsync();
+            return entity;
         }
 
-        public async Task<IEnumerable<Category>> GetActiveCategoriesAsync()
+        public virtual async Task UpdateAsync(Category entity)
         {
-            return await _dbSet
-                .Include(c => c.Courses)
-                .Where(c => c.IsActive)
-                .OrderBy(c => c.DisplayOrder)
-                .ThenBy(c => c.Name)
-                .ToListAsync();
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public virtual async Task DeleteAsync(int id)
+        {
+            var entity = await _context.Categories.FindAsync(id);
+            if (entity != null)
+            {
+                _context.Categories.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public virtual async Task<int> CountAsync()
+        {
+            return await _context.Categories.CountAsync();
+        }
+
+        public virtual async Task<int> CountActiveAsync()
+        {
+            return await _context.Categories.CountAsync(c => c.IsActive);
         }
     }
 }
