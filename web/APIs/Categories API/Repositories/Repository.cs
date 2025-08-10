@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -8,7 +8,7 @@ using IBSRA.Models;
 
 namespace IBSRA.Repositories
 {
-    public class Repository : IRepository
+    public class CategoryRepository : ICategoryRepository
     {
         protected readonly AppDbContext _context;
 
