@@ -14,6 +14,7 @@ namespace IBSRA.Repositories
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(int id);
+        Task<int> CountActiveAsync();
         Task<int> CountAsync(Expression<Func<T, bool>> predicate = null);
     }
 
@@ -23,4 +24,5 @@ namespace IBSRA.Repositories
         Task<Category> GetByNameAsync(string name);
         Task<IEnumerable<Category>> GetActiveCategoriesAsync();
     }
+
 }
