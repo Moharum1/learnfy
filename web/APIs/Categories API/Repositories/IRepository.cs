@@ -1,28 +1,21 @@
-﻿using IBSRA.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
+using IBSRA.Models;
 
 namespace IBSRA.Repositories
 {
-    public interface IRepository<T> where T : class
+    public interface ICategoryRepository
     {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetByIdAsync(int id);
-        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
-        Task<T> AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(int id);
-        Task<int> CountActiveAsync();
-        Task<int> CountAsync(Expression<Func<T, bool>> predicate = null);
-    }
-
-    public interface ICategoryRepository : IRepository<Category>
-    {
-        Task<IEnumerable<Category>> GetPopularCategoriesAsync(int count);
+        Task<IEnumerable<Category>> GetAllAsync();
+        Task<Category> GetByIdAsync(int id);
         Task<Category> GetByNameAsync(string name);
         Task<IEnumerable<Category>> GetActiveCategoriesAsync();
+        Task<IEnumerable<Category>> GetPopularCategoriesAsync(int count);
+        Task<Category> AddAsync(Category entity);
+        Task UpdateAsync(Category entity);
+        Task DeleteAsync(int id);
+        Task<int> CountAsync();
+        Task<int> CountActiveAsync();
     }
-
 }
